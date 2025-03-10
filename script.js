@@ -48,6 +48,17 @@ audioPlayer.addEventListener('ended', function () {
     loadRandomSong();
 });
 
+// Play/pause functionality
+playPauseBtn.addEventListener('click', function () {
+    if (audioPlayer.paused) {
+        audioPlayer.play();
+        playPauseBtn.textContent = 'Pause';
+    } else {
+        audioPlayer.pause();
+        playPauseBtn.textContent = 'Play';
+    }
+});
+
 // Preload song data
 async function loadRandomSong() {
     try {
@@ -77,8 +88,13 @@ async function loadRandomSong() {
 
         // Set the audio source
         audioPlayer.src = data.audio;
-        audioPlayer.play();
-        playPauseBtn.textContent = 'Pause'; // Show Pause since the song starts automatically
+
+        // Wait for the audio to load before playing
+        audioPlayer.onloadeddata = function () {
+            // Only change button text once the audio is ready to play
+            playPauseBtn.textContent = 'Play';
+            audioPlayer.play();
+        };
 
         // Update the background image (if available)
         if (data.background) {
