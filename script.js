@@ -2,6 +2,8 @@ let currentSongId = null; // Track the latest song ID
 let currentRequest = null; // Store the current fetch request
 let currentImageRequest = null; // Store the current image loading request
 
+let isSongLoaded = false; // Flag to track if the song has been properly loaded
+
 async function preloadImage(url, callback) {
     if (currentImageRequest) {
         currentImageRequest.abort(); // Cancel previous image loading
@@ -51,7 +53,12 @@ async function loadRandomSong() {
         // Set the audio source
         const audioPlayer = document.getElementById('audio-player');
         audioPlayer.src = data.audio;
-        audioPlayer.play();
+
+        // Once the audio metadata is loaded, allow the play button to work
+        audioPlayer.onloadedmetadata = function() {
+            isSongLoaded = true; // Song is loaded and ready to play
+            document.getElementById('playPauseBtn').disabled = false; // Enable the play button
+        };
 
         // Load and set the background only if the song ID is still the same
         if (data.background) {
@@ -75,6 +82,24 @@ async function loadRandomSong() {
         }
     }
 }
+
+// Play/Pause Button Functionality
+document.getElementById('playPauseBtn').addEventListener('click', function() {
+    const audioPlayer = document.getElementById('audio-player');
+
+    if (!isSongLoaded) {
+        console.log("Song is not ready yet");
+        return; // Don't attempt to play if the song is not loaded
+    }
+
+    if (audioPlayer.paused) {
+        audioPlayer.play();
+        this.textContent = 'Pause';
+    } else {
+        audioPlayer.pause();
+        this.textContent = 'Play';
+    }
+});
 
 // Handle the time updates and seekbar
 document.getElementById('audio-player').addEventListener('timeupdate', function () {
