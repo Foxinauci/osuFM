@@ -5,7 +5,7 @@ function preloadImage(url) {
 
 async function loadRandomSong() {
     try {
-        const response = await fetch('https://mathicloud.com/random-song');
+        const response = await fetch('https://osufmapi.mathicloud.com/random-song');
         const data = await response.json();
 
         if (data.error) {
