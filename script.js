@@ -29,7 +29,7 @@ async function loadRandomSong() {
         if (data.background) {
             preloadImage(data.background, function(url) {
                 document.body.style.backgroundImage = 'none';  // Clear any existing background
-                document.body.style.transition = "background-image 0.3s ease-in-out";
+                document.body.style.transition = "background-image 0.1s ease-in-out";
                 document.body.style.backgroundImage = `url(${url})`;
             });
         }
