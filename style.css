@@ -67,10 +67,12 @@ h2 {
     z-index: 9999;
     cursor: pointer;
     position: relative; /* Needed for positioning the popup */
+    width: auto; /* Adjusts to the content width */
+    display: inline-block; /* Prevents full-width spanning */
 }
 
 .popup-menu {
-    display: none; /* Hide by default */
+    display: none; /* Hidden by default */
     position: absolute;
     top: 100%; /* Position below the warning message */
     left: 50%;
@@ -80,11 +82,7 @@ h2 {
     padding: 10px;
     border-radius: 5px;
     margin-top: 5px;
-    width: 200px; /* Set a width for the popup */
-}
-
-.warning:hover .popup-menu {
-    display: block; /* Show when hovering over the warning */
+    width: 200px;
 }
 
 .popup-menu ul {
