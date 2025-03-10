@@ -67,6 +67,9 @@ async function loadRandomSong() {
             
             // Set initial time as 0:00
             document.getElementById('current-time').textContent = "0:00 / " + duration;
+
+            // Play the song automatically when the song is loaded
+            audioPlayer.play();
         };
 
         // Load and set the background only if the song ID is still the same
