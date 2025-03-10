@@ -5,9 +5,7 @@ let audioPlayer = document.getElementById('audio-player');
 let seekBar = document.getElementById('seek-bar');
 let currentTimeDisplay = document.getElementById('current-time');
 let playPauseBtn = document.getElementById('playPauseBtn');
-let volumeBar = document.getElementById('volume-bar'); // Volume bar element
-let selectFolderBtn = document.getElementById('select-folder-button'); // Button for folder selection
-let songInfoDiv = document.getElementById('song-info'); // Display song info dynamically
+let volumeBar = document.getElementById('volume-bar');  // Volume bar element
 
 // Function to format time (mm:ss)
 function formatTime(seconds) {
@@ -131,108 +129,13 @@ async function preloadImage(url, callback) {
     };
 }
 
+// Set the initial volume bar value to the current volume of the audio player
+volumeBar.value = audioPlayer.volume * 100;  // Convert the volume to percentage
+
 // Volume Control: Adjust audio volume based on volume bar
 volumeBar.addEventListener("input", function() {
-    audioPlayer.volume = volumeBar.value; // Set the audio volume (range 0-1)
+    audioPlayer.volume = volumeBar.value; // Convert the volume back to 0-1 range
 });
-
-// Function to parse metadata from an .osu file
-function parseOsuFileMetadata(osuData) {
-    const metadataSection = osuData.split('[Metadata]')[1];
-    const titleMatch = metadataSection.match(/Title:(.*?)(?=\r?\n|$)/);
-    const artistMatch = metadataSection.match(/Artist:(.*?)(?=\r?\n|$)/);
-    const audioFileMatch = osuData.match(/AudioFilename:(.*?)(?=\r?\n|$)/);
-
-    return {
-        title: titleMatch ? titleMatch[1].trim() : 'Unknown Title',
-        artist: artistMatch ? artistMatch[1].trim() : 'Unknown Artist',
-        audioFile: audioFileMatch ? audioFileMatch[1].trim() : 'unknown.mp3',
-    };
-}
-
-// Function to display song info on the website
-function displaySongInfo(title, artist, audioFile, folderHandle) {
-    songInfoDiv.innerHTML = `
-        <h3>${title} by ${artist}</h3>
-        <audio controls>
-            <source src="${folderHandle.name}/${audioFile}" type="audio/mp3">
-            Your browser does not support the audio element.
-        </audio>
-    `;
-}
-
-// Handle folder selection
-selectFolderBtn.addEventListener("click", selectOsuFolder);
-
-async function selectOsuFolder() {
-    try {
-        // Ask the user to select their osu! song folder
-        const dirHandle = await window.showDirectoryPicker();
-
-        // Read the folders inside the osu! song folder
-        const songFolders = [];
-        for await (const entry of dirHandle.values()) {
-            if (entry.kind === 'directory') {
-                songFolders.push(entry.name);
-            }
-        }
-
-        if (songFolders.length === 0) {
-            alert("No osu! songs found in the selected folder.");
-            return;
-        }
-
-        // Example: Let's assume we choose the first folder to process
-        const selectedFolder = songFolders[0];
-        const folderHandle = await dirHandle.getDirectoryHandle(selectedFolder);
-
-        // Read .osu files in the selected folder
-        const osuFiles = [];
-        for await (const entry of folderHandle.values()) {
-            if (entry.kind === 'file' && entry.name.endsWith('.osu')) {
-                osuFiles.push(entry);
-            }
-        }
-
-        if (osuFiles.length === 0) {
-            alert("No .osu files found in the selected folder.");
-            return;
-        }
-
-        // Process the first .osu file to get metadata
-        const osuFile = osuFiles[0];
-        const file = await osuFile.getFile();
-        const osuData = await file.text();
-
-        // Parse the osu! file and extract metadata
-        const metadata = parseOsuFileMetadata(osuData);
-        const audioFile = metadata.audioFile;
-        const title = metadata.title;
-        const artist = metadata.artist;
-
-        // Display song info
-        displaySongInfo(title, artist, audioFile, folderHandle);
-
-        // Set the audio source
-        audioPlayer.src = `${folderHandle.name}/${audioFile}`;
-
-        // Once the audio is ready, we can update the play button
-        audioPlayer.onloadeddata = function () {
-            if (audioPlayer.paused) {
-                playPauseBtn.textContent = 'Play';
-            } else {
-                playPauseBtn.textContent = 'Pause';
-            }
-        };
-
-        // Auto-play the song when it's loaded
-        audioPlayer.play();
-
-    } catch (err) {
-        console.error('Error accessing osu! folder:', err);
-        alert('An error occurred while accessing your osu! folder.');
-    }
-}
 
 // Load a song when the page opens
 loadRandomSong();
