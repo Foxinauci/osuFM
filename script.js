@@ -1,5 +1,4 @@
-let currentRequest = null;  // Store the current fetch request
-let latestSongId = null;  // Store the latest song request
+let currentRequest = null; // Store the current fetch request
 
 async function preloadImage(url, callback) {
     const img = new Image();
@@ -20,6 +19,7 @@ async function loadRandomSong() {
         const controller = new AbortController();
         currentRequest = controller;
 
+        // Fetch the song
         const response = await fetch('https://osufmapi.mathicloud.com/random-song', { signal: controller.signal });
         const data = await response.json();
 
@@ -28,19 +28,15 @@ async function loadRandomSong() {
             return;
         }
 
-        // Ignore old requests if a newer one was started
-        if (latestSongId && latestSongId !== data.beatmapId) return;
-        latestSongId = data.beatmapId;  // Update the latest song ID
-
         // Update the song title and artist
         document.getElementById('song-title').textContent = data.metadata.title;
         document.getElementById('song-artist').textContent = data.metadata.artist;
 
-        console.log(data.background);
+        console.log("Loading background:", data.background);
         
         // Set the background image and preload it
         if (data.background) {
-            await preloadImage(data.background, function (url) {
+            preloadImage(data.background, function (url) {
                 document.body.style.backgroundImage = 'none';  // Clear any existing background
                 document.body.style.transition = "background-image 300ms ease-in-out";
                 document.body.style.backgroundImage = `url(${url})`;
@@ -50,11 +46,11 @@ async function loadRandomSong() {
         // Update the audio source and play the song
         const audioPlayer = document.getElementById('audio-player');
         audioPlayer.src = data.audio;
-        audioPlayer.play();  // Play the song automatically
+        audioPlayer.play(); // Play the song automatically
 
         // Add an event listener to load the next song when the current one ends
         audioPlayer.onended = function () {
-            loadRandomSong();  // Call the function again to load the next song
+            loadRandomSong(); // Call the function again to load the next song
         };
 
     } catch (error) {
