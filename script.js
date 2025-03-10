@@ -3,6 +3,7 @@ let currentRequest = null; // Store the current fetch request
 let currentImageRequest = null; // Store the current image loading request
 
 let isSongLoaded = false; // Flag to track if the song has been properly loaded
+let isMetadataLoaded = false; // Flag to check if metadata is loaded
 
 async function preloadImage(url, callback) {
     if (currentImageRequest) {
@@ -56,7 +57,7 @@ async function loadRandomSong() {
 
         // Once the audio metadata is loaded, allow the play button to work
         audioPlayer.onloadedmetadata = function () {
-            isSongLoaded = true; // Song is loaded and ready to play
+            isMetadataLoaded = true; // Song metadata is loaded
             document.getElementById('playPauseBtn').disabled = false; // Enable the play button
             document.getElementById('playPauseBtn').textContent = 'Play'; // Set play button to "Play"
 
@@ -95,9 +96,9 @@ async function loadRandomSong() {
 document.getElementById('playPauseBtn').addEventListener('click', function () {
     const audioPlayer = document.getElementById('audio-player');
 
-    if (!isSongLoaded) {
-        console.log("Song is not ready yet");
-        return; // Don't attempt to play if the song is not loaded
+    if (!isMetadataLoaded) {
+        console.log("Song metadata is not ready yet");
+        return; // Don't attempt to play if the song metadata is not loaded
     }
 
     if (audioPlayer.paused) {
