@@ -6,8 +6,28 @@
     <title>osu!FM</title>
     <!-- Link to the external CSS file -->
     <link rel="stylesheet" href="/style.css">
+    <style>
+        .warning {
+            background-color: #ffcc00;
+            color: black;
+            text-align: center;
+            padding: 10px;
+            font-weight: bold;
+            position: fixed;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            width: 90%;
+        }
+    </style>
 </head>
 <body>
+    <!-- Warning message -->
+    <div class="warning">
+        This is a prototype. I'm working on it!
+    </div>
+
     <div class="overlay"></div>
     <div class="container">
         <h1 id="song-title">Loading...</h1>
