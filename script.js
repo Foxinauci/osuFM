@@ -51,11 +51,11 @@ audioPlayer.addEventListener('ended', function () {
 // Play/pause functionality
 playPauseBtn.addEventListener('click', function () {
     if (audioPlayer.paused) {
-        audioPlayer.play();
-        playPauseBtn.textContent = 'Pause';
+        audioPlayer.play();  // Play the song
+        playPauseBtn.textContent = 'Pause';  // Change button text to Pause
     } else {
-        audioPlayer.pause();
-        playPauseBtn.textContent = 'Play';
+        audioPlayer.pause();  // Pause the song
+        playPauseBtn.textContent = 'Play';  // Change button text to Play
     }
 });
 
@@ -89,12 +89,18 @@ async function loadRandomSong() {
         // Set the audio source
         audioPlayer.src = data.audio;
 
-        // Wait for the audio to load before playing
+        // Once the audio is ready, we can update the play button
         audioPlayer.onloadeddata = function () {
-            // Only change button text once the audio is ready to play
-            playPauseBtn.textContent = 'Play';
-            audioPlayer.play();
+            // If the audio is not already playing, set the button text to Play
+            if (audioPlayer.paused) {
+                playPauseBtn.textContent = 'Play';
+            } else {
+                playPauseBtn.textContent = 'Pause'; // If it's playing, show Pause
+            }
         };
+
+        // Auto-play the song when it's loaded
+        audioPlayer.play();
 
         // Update the background image (if available)
         if (data.background) {
@@ -113,6 +119,7 @@ async function loadRandomSong() {
         }
     }
 }
+
 
 // Preload image helper function
 async function preloadImage(url, callback) {
