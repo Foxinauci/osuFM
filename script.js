@@ -1,21 +1,32 @@
+let currentSongId = null; // Track the latest song ID
 let currentRequest = null; // Store the current fetch request
+let currentImageRequest = null; // Store the current image loading request
 
 async function preloadImage(url, callback) {
+    if (currentImageRequest) {
+        currentImageRequest.abort(); // Cancel previous image loading
+    }
+
+    const controller = new AbortController();
+    currentImageRequest = controller;
+
     const img = new Image();
     img.src = url;
+
     img.onload = function () {
-        callback(url);
+        if (!controller.signal.aborted) {
+            callback(url);
+        }
     };
 }
 
 async function loadRandomSong() {
     try {
-        // Cancel any previous request if it exists
+        // Cancel any previous fetch request
         if (currentRequest) {
             currentRequest.abort();
         }
 
-        // Create a new AbortController for this request
         const controller = new AbortController();
         currentRequest = controller;
 
@@ -28,25 +39,30 @@ async function loadRandomSong() {
             return;
         }
 
+        // Set the current song ID
+        currentSongId = data.audio; // Use the unique audio URL as an ID
+
         // Update the song title and artist
         document.getElementById('song-title').textContent = data.metadata.title;
         document.getElementById('song-artist').textContent = data.metadata.artist;
 
         console.log("Loading background:", data.background);
-        
-        // Set the background image and preload it
-        if (data.background) {
-            preloadImage(data.background, function (url) {
-                document.body.style.backgroundImage = 'none';  // Clear any existing background
-                document.body.style.transition = "background-image 300ms ease-in-out";
-                document.body.style.backgroundImage = `url(${url})`;
-            });
-        }
 
-        // Update the audio source and play the song
+        // Set the audio source
         const audioPlayer = document.getElementById('audio-player');
         audioPlayer.src = data.audio;
-        audioPlayer.play(); // Play the song automatically
+        audioPlayer.play();
+
+        // Load and set the background only if the song ID is still the same
+        if (data.background) {
+            preloadImage(data.background, function (url) {
+                if (currentSongId === data.audio) { // Ensure it's still the latest song
+                    document.body.style.backgroundImage = 'none'; // Clear previous background
+                    document.body.style.transition = "background-image 300ms ease-in-out";
+                    document.body.style.backgroundImage = `url(${url})`;
+                }
+            });
+        }
 
         // Add an event listener to load the next song when the current one ends
         audioPlayer.onended = function () {
