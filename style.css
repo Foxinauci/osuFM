@@ -56,19 +56,17 @@ h2 {
 }
 
 .warning {
-    position: absolute;
-    top: 10px;
+    position: fixed; /* Change from absolute to fixed for centering on the screen */
+    top: 10px; /* Adjust top position as needed */
     left: 50%;
-    transform: translateX(-50%);
+    transform: translateX(-50%); /* Center horizontally */
     color: white;
     padding: 5px 15px;
     font-size: 16px;
     border-radius: 5px;
     z-index: 9999;
     cursor: pointer;
-    position: relative; /* Needed for positioning the popup */
-    width: auto; /* Adjusts to the content width */
-    display: inline-block; /* Prevents full-width spanning */
+    display: inline-block; /* Adjusts to the content width */
 }
 
 .popup-menu {
@@ -94,6 +92,7 @@ h2 {
 .popup-menu li {
     padding: 5px 0;
 }
+
 
 /* Custom button design */
 button {
