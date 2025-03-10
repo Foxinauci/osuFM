@@ -1,3 +1,11 @@
+function preloadImage(url, callback) {
+    const img = new Image();
+    img.src = url;
+    img.onload = function() {
+        callback(url);
+    };
+}
+
 async function loadRandomSong() {
     try {
         const response = await fetch('https://osufmapi.mathicloud.com/random-song');
@@ -19,8 +27,10 @@ async function loadRandomSong() {
 
         // Set the background image and preload it
         if (data.background) {
+            preloadImage(data.background, function(url) {
                 document.body.style.transition = "background-image 0.3s ease-in-out";
-                document.body.style.backgroundImage = `url(${data.background})`;
+                document.body.style.backgroundImage = `url(${url})`;
+            });
         }
 
         // Add an event listener to load the next song when the current one ends
