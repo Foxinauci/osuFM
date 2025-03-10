@@ -38,30 +38,6 @@ async function loadRandomSong() {
             loadRandomSong();  // Call the function again to load the next song
         };
 
-        // Custom seekbar and time display functionality
-        const seekbar = document.getElementById('audio-seekbar');
-        const currentTimeDisplay = document.getElementById('current-time');
-
-        // Update the seekbar when the audio's current time changes
-        audioPlayer.addEventListener('timeupdate', function() {
-            const progress = (audioPlayer.currentTime / audioPlayer.duration) * 100;
-            seekbar.value = progress;
-
-            // Format current time (mm:ss)
-            const minutes = Math.floor(audioPlayer.currentTime / 60);
-            const seconds = Math.floor(audioPlayer.currentTime % 60);
-            currentTimeDisplay.textContent = `${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
-        });
-
-        // Sync the audio playback position with the seekbar
-        seekbar.addEventListener('input', function() {
-            const seekTime = (seekbar.value / 100) * audioPlayer.duration;
-            audioPlayer.currentTime = seekTime;
-        });
-
-        // Play the audio when the page loads (or based on your desired event)
-        audioPlayer.play();
-
     } catch (error) {
         console.error("Failed to fetch song:", error);
     }
