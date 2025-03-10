@@ -20,11 +20,6 @@ async function loadRandomSong() {
         document.getElementById('song-title').textContent = data.metadata.title;
         document.getElementById('song-artist').textContent = data.metadata.artist;
 
-        // Update the audio source and play the song
-        const audioPlayer = document.getElementById('audio-player');
-        audioPlayer.src = data.audio;
-        audioPlayer.play();  // Play the song automatically
-
         // Set the background image and preload it
         if (data.background) {
             await preloadImage(data.background, function(url) {
@@ -33,6 +28,12 @@ async function loadRandomSong() {
                 document.body.style.backgroundImage = `url(${url})`;
             });
         }
+
+        // Update the audio source and play the song
+        const audioPlayer = document.getElementById('audio-player');
+        audioPlayer.src = data.audio;
+        audioPlayer.play();  // Play the song automatically
+
 
         // Add an event listener to load the next song when the current one ends
         audioPlayer.onended = function() {
