@@ -20,6 +20,7 @@ async function loadRandomSong() {
         document.getElementById('song-title').textContent = data.metadata.title;
         document.getElementById('song-artist').textContent = data.metadata.artist;
 
+        console.log(data.background);
         // Set the background image and preload it
         if (data.background) {
             await preloadImage(data.background, function(url) {
