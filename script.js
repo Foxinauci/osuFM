@@ -1,4 +1,4 @@
-function preloadImage(url, callback) {
+async function preloadImage(url, callback) {
     const img = new Image();
     img.src = url;
     img.onload = function() {
@@ -27,7 +27,7 @@ async function loadRandomSong() {
 
         // Set the background image and preload it
         if (data.background) {
-            preloadImage(data.background, function(url) {
+            await preloadImage(data.background, function(url) {
                 document.body.style.backgroundImage = 'none';  // Clear any existing background
                 document.body.style.transition = "background-image 100ms ease-in-out";
                 document.body.style.backgroundImage = `url(${url})`;
