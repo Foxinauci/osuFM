@@ -30,7 +30,7 @@ audioPlayer.addEventListener('timeupdate', function () {
     const duration = audioPlayer.duration;
 
     // Update the seekbar and current time display
-    if (!isNaN(duration)) { // Prevent NaN errors if the duration isn't loaded yet
+    if (!isNaN(duration) && duration > 0) { // Prevent NaN errors if the duration isn't loaded yet
         seekBar.value = (currentTime / duration) * 100;
         currentTimeDisplay.textContent = `${formatTime(currentTime)} / ${formatTime(duration)}`;
     }
@@ -46,17 +46,6 @@ seekBar.addEventListener('input', function () {
 // Autoplay next song when current one ends
 audioPlayer.addEventListener('ended', function () {
     loadRandomSong();
-});
-
-// Play/pause functionality
-playPauseBtn.addEventListener('click', function () {
-    if (audioPlayer.paused) {
-        audioPlayer.play();  // Play the song
-        playPauseBtn.textContent = 'Pause';  // Change button text to Pause
-    } else {
-        audioPlayer.pause();  // Pause the song
-        playPauseBtn.textContent = 'Play';  // Change button text to Play
-    }
 });
 
 // Preload song data
@@ -119,7 +108,6 @@ async function loadRandomSong() {
         }
     }
 }
-
 
 // Preload image helper function
 async function preloadImage(url, callback) {
