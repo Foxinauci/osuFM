@@ -56,20 +56,24 @@ h2 {
 }
 
 .warning {
-    position: fixed; /* Change from absolute to fixed for centering on the screen */
-    top: 10px; /* Adjust top position as needed */
+    position: fixed;
+    top: 10px;
     left: 50%;
-    transform: translateX(-50%); /* Center horizontally */
+    transform: translateX(-50%);
     color: white;
     padding: 5px 15px;
     font-size: 16px;
     border-radius: 5px;
     z-index: 9999;
     cursor: pointer;
-    display: inline-block; /* Adjusts to the content width */
+    display: inline-block;
 }
 
-.popup-menu {
+.warning input[type="checkbox"] {
+    display: none; /* Hide the checkbox */
+}
+
+.warning .popup-menu {
     display: none; /* Hidden by default */
     position: absolute;
     top: 100%; /* Position below the warning message */
@@ -83,6 +87,10 @@ h2 {
     width: 200px;
 }
 
+.warning input[type="checkbox"]:checked + label + .popup-menu {
+    display: block; /* Show the popup menu when checkbox is checked */
+}
+
 .popup-menu ul {
     list-style-type: none;
     padding: 0;
@@ -92,6 +100,7 @@ h2 {
 .popup-menu li {
     padding: 5px 0;
 }
+
 
 
 /* Custom button design */
