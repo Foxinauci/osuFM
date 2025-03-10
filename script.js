@@ -1,8 +1,23 @@
-function preloadImage(url, callback) {
+function preloadImage(url, callback, retryCount = 3) {
     const img = new Image();
     img.src = url;
+
+    // Onload callback
     img.onload = function() {
         callback(url);
+    };
+
+    // Onerror callback with retry mechanism
+    img.onerror = function() {
+        console.error("Failed to load image:", url);
+        if (retryCount > 0) {
+            console.log(`Retrying... Attempts left: ${retryCount}`);
+            setTimeout(() => preloadImage(url, callback, retryCount - 1), 2000); // Retry after 2 seconds
+        } else {
+            console.error("Failed to load image after multiple attempts.");
+            // Optionally, set a fallback image or handle error
+            document.body.style.backgroundImage = "url('path/to/fallback-image.jpg')";
+        }
     };
 }
 
@@ -24,6 +39,9 @@ async function loadRandomSong() {
         const audioPlayer = document.getElementById('audio-player');
         audioPlayer.src = data.audio;
         audioPlayer.play();  // Play the song automatically
+
+        // Set a placeholder background initially
+        document.body.style.backgroundImage = "url('path/to/loading-placeholder.jpg')";
 
         // Set the background image and preload it
         if (data.background) {
