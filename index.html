@@ -32,6 +32,10 @@
     <div class="container">
         <h1 id="song-title">Loading...</h1>
         <h2 id="song-artist"></h2>
+        <div class="seekbar">
+            <input type="range" id="audio-seekbar" value="0" max="100" step="1">
+            <div class="time-display" id="current-time">0:00</div>
+        </div>
         <audio id="audio-player" controls></audio>
         <br>
         <button onclick="loadRandomSong()">Next Song</button>
