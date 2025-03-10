@@ -1,6 +1,11 @@
 let currentSongId = null; // Track the latest song ID
 let currentRequest = null; // Store the current fetch request
 let currentImageRequest = null; // Store the current image loading request
+let isPlaying = false; // Track whether the audio is playing or paused
+let audioPlayer = document.getElementById('audio-player'); // Reference to the audio player
+let seekBar = document.getElementById('seek-bar'); // Reference to the seek bar
+let playPauseBtn = document.getElementById('playPauseBtn'); // Play/Pause button
+let trackInfo = document.getElementById('track-info'); // Track info display
 
 async function preloadImage(url, callback) {
     if (currentImageRequest) {
@@ -49,9 +54,10 @@ async function loadRandomSong() {
         console.log("Loading background:", data.background);
 
         // Set the audio source
-        const audioPlayer = document.getElementById('audio-player');
         audioPlayer.src = data.audio;
         audioPlayer.play();
+        isPlaying = true;
+        updatePlayPauseButton();
 
         // Load and set the background only if the song ID is still the same
         if (data.background) {
@@ -69,10 +75,50 @@ async function loadRandomSong() {
             loadRandomSong(); // Call the function again to load the next song
         };
 
+        // Update track info
+        trackInfo.textContent = `Track: ${data.metadata.title} - ${data.metadata.artist}`;
+
+        // Update the seek bar every 0.1 seconds
+        setInterval(updateSeekBar, 100);
+
     } catch (error) {
         if (error.name !== 'AbortError') {
             console.error("Failed to fetch song:", error);
         }
+    }
+}
+
+// Update the seek bar based on audio playback
+function updateSeekBar() {
+    if (audioPlayer.duration) {
+        const progress = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+        seekBar.value = progress;
+    }
+}
+
+// Sync seek bar with audio
+seekBar.addEventListener('input', function () {
+    const newTime = (seekBar.value / 100) * audioPlayer.duration;
+    audioPlayer.currentTime = newTime;
+});
+
+// Toggle play/pause
+playPauseBtn.addEventListener('click', function () {
+    if (isPlaying) {
+        audioPlayer.pause();
+    } else {
+        audioPlayer.play();
+    }
+    isPlaying = !isPlaying;
+    updatePlayPauseButton();
+});
+
+// Update the play/pause button text
+function updatePlayPauseButton() {
+    if (isPlaying) {
+        playPauseBtn.textContent = 'Pause';
+    } else {
+        playPauseBtn.textContent = 'Play';
     }
 }
 

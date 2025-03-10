@@ -5,22 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>osu!FM</title>
     <link rel="stylesheet" href="/style.css?v=1.0.4">
-    <style>
-        .warning {
-            background-color: transparent; /* Make background transparent */
-            color: white;  /* Change text color to white */
-            text-align: center;
-            padding: 5px;  /* Reduced padding for smaller box */
-            font-weight: bold;
-            font-size: 14px;  /* Optional: smaller text size */
-            position: fixed;
-            top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 1000;
-            width: auto;
-        }
-    </style>
 </head>
 <body>
     <!-- Warning message -->
@@ -32,10 +16,27 @@
     <div class="container">
         <h1 id="song-title">Loading...</h1>
         <h2 id="song-artist"></h2>
-        <audio id="audio-player" controls></audio>
+
+        <!-- Audio bar container -->
+        <div class="audio-bar">
+            <!-- Play/Pause button -->
+            <button class="play-pause-btn" id="playPauseBtn">Play</button>
+
+            <!-- Progress bar -->
+            <input id="seek-bar" type="range" min="0" max="100" value="0" step="0.1">
+
+            <!-- Track information -->
+            <div class="track-info">
+                <span id="track-info"></span>
+            </div>
+        </div>
+
         <br>
         <button onclick="loadRandomSong()">Next Song</button>
     </div>
+
+    <!-- Audio player -->
+    <audio id="audio-player" src="" controls></audio>
 
     <script src="script.js?v=1.1.3"></script>
 </body>
