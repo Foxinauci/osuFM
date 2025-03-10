@@ -76,6 +76,11 @@ async function loadRandomSong() {
         document.getElementById('song-title').textContent = data.metadata.title;
         document.getElementById('song-artist').textContent = data.metadata.artist;
 
+        let osuURL = `https://osu.ppy.sh/beatmapsets/${data.beatmapId}`;
+
+        // Update the anchor tag
+        document.getElementById("beatmap-link").href = osuURL;
+
         // Set the audio source
         audioPlayer.src = data.audio;
 
@@ -136,6 +141,10 @@ volumeBar.value = audioPlayer.volume * 100;  // Convert the volume to percentage
 volumeBar.addEventListener("input", function() {
     audioPlayer.volume = volumeBar.value; // Convert the volume back to 0-1 range
 });
+
+function openBeatmap() {
+    window.open(`https://osu.ppy.sh/beatmapsets/${beatmapID}`, "_blank");
+}
 
 // Load a song when the page opens
 loadRandomSong();
