@@ -5,6 +5,14 @@ let currentImageRequest = null; // Store the current image loading request
 let isSongLoaded = false; // Flag to track if the song has been properly loaded
 let isMetadataLoaded = false; // Flag to check if metadata is loaded
 
+// Format time as minutes:seconds (e.g., 2:30)
+function formatTime(seconds) {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = Math.floor(seconds % 60);
+    return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+}
+
+// Preload the background image
 async function preloadImage(url, callback) {
     if (currentImageRequest) {
         currentImageRequest.abort(); // Cancel previous image loading
@@ -23,6 +31,7 @@ async function preloadImage(url, callback) {
     };
 }
 
+// Load a random song from the server
 async function loadRandomSong() {
     try {
         // Cancel any previous fetch request
@@ -33,7 +42,7 @@ async function loadRandomSong() {
         const controller = new AbortController();
         currentRequest = controller;
 
-        // Fetch the song
+        // Fetch the song from the server
         const response = await fetch('https://osufmapi.mathicloud.com/random-song', { signal: controller.signal });
         const data = await response.json();
 
@@ -42,37 +51,40 @@ async function loadRandomSong() {
             return;
         }
 
-        // Set the current song ID
+        // Set the current song ID (audio URL)
         currentSongId = data.audio; // Use the unique audio URL as an ID
 
-        // Update the song title and artist
+        // Update the song title and artist in the UI
         document.getElementById('song-title').textContent = data.metadata.title;
         document.getElementById('song-artist').textContent = data.metadata.artist;
 
         console.log("Loading background:", data.background);
 
-        // Set the audio source
+        // Set the audio source for the player
         const audioPlayer = document.getElementById('audio-player');
         audioPlayer.src = data.audio;
 
         // Ensure the total duration is displayed after metadata is loaded
         audioPlayer.onloadedmetadata = function () {
             isMetadataLoaded = true; // Song metadata is loaded
-            document.getElementById('playPauseBtn').disabled = false; // Enable the play button
-            document.getElementById('playPauseBtn').textContent = 'Play'; // Set play button to "Play"
 
-            // Display the total duration of the song
+            // Set duration after metadata is loaded
             const duration = formatTime(audioPlayer.duration);
             document.getElementById('duration-time').textContent = duration;
-            
+
             // Set initial time as 0:00
             document.getElementById('current-time').textContent = "0:00 / " + duration;
 
             // Play the song automatically when the song is loaded
-            audioPlayer.play();
+            audioPlayer.play().then(() => {
+                document.getElementById('playPauseBtn').disabled = false; // Enable play button
+                document.getElementById('playPauseBtn').textContent = 'Pause'; // Change play button to "Pause"
+            }).catch(error => {
+                console.error('Autoplay error:', error);
+            });
         };
 
-        // Load and set the background only if the song ID is still the same
+        // Load and set the background image only if the song ID is still the same
         if (data.background) {
             preloadImage(data.background, function (url) {
                 if (currentSongId === data.audio) { // Ensure it's still the latest song
@@ -128,14 +140,7 @@ document.getElementById('audio-player').addEventListener('timeupdate', function 
     document.getElementById('current-time').textContent = `${currentTime} / ${duration}`;
 });
 
-// Format time in minutes:seconds format
-function formatTime(seconds) {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = Math.floor(seconds % 60);
-    return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
-}
-
-// Seek functionality
+// Seek functionality (dragging the seekbar)
 document.getElementById('seek-bar').addEventListener('input', function () {
     const audioPlayer = document.getElementById('audio-player');
     const seekBar = document.getElementById('seek-bar');
@@ -144,5 +149,5 @@ document.getElementById('seek-bar').addEventListener('input', function () {
     audioPlayer.currentTime = (seekBar.value / 100) * audioPlayer.duration;
 });
 
-// Load a song when the page opens
+// Load the first random song when the page opens
 loadRandomSong();
