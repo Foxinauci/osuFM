@@ -20,7 +20,7 @@ async function loadRandomSong() {
         // Set the background image and preload it
         if (data.background) {
                 document.body.style.transition = "background-image 0.3s ease-in-out";
-                document.body.style.backgroundImage = data.background;
+                document.body.style.backgroundImage = `url(${data.background})`;
         }
 
         // Add an event listener to load the next song when the current one ends
