@@ -55,7 +55,7 @@ async function loadRandomSong() {
         const audioPlayer = document.getElementById('audio-player');
         audioPlayer.src = data.audio;
 
-        // Once the audio metadata is loaded, allow the play button to work
+        // Ensure the total duration is displayed after metadata is loaded
         audioPlayer.onloadedmetadata = function () {
             isMetadataLoaded = true; // Song metadata is loaded
             document.getElementById('playPauseBtn').disabled = false; // Enable the play button
