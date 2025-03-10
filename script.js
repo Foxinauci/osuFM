@@ -1,25 +1,54 @@
-let currentSongId = null;
-let currentRequest = null;
-let currentImageRequest = null;
+let currentSongId = null; // Track the latest song ID
+let currentRequest = null; // Store the current fetch request
+let currentImageRequest = null; // Store the current image loading request
+let audioPlayer = document.getElementById('audio-player');
+let seekBar = document.getElementById('seek-bar');
+let currentTimeDisplay = document.getElementById('current-time');
+let playPauseBtn = document.getElementById('playPauseBtn');
 
-async function preloadImage(url, callback) {
-    if (currentImageRequest) {
-        currentImageRequest.abort(); // Cancel previous image loading
-    }
-
-    const controller = new AbortController();
-    currentImageRequest = controller;
-
-    const img = new Image();
-    img.src = url;
-
-    img.onload = function () {
-        if (!controller.signal.aborted) {
-            callback(url);
-        }
-    };
+// Function to format time (mm:ss)
+function formatTime(seconds) {
+    const minutes = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
 }
 
+// Play/pause functionality
+playPauseBtn.addEventListener('click', function () {
+    if (audioPlayer.paused) {
+        audioPlayer.play();
+        playPauseBtn.textContent = 'Pause';
+    } else {
+        audioPlayer.pause();
+        playPauseBtn.textContent = 'Play';
+    }
+});
+
+// Update seekbar and time display
+audioPlayer.addEventListener('timeupdate', function () {
+    const currentTime = audioPlayer.currentTime;
+    const duration = audioPlayer.duration;
+
+    // Update seekbar
+    seekBar.value = (currentTime / duration) * 100;
+
+    // Update current time and duration time
+    currentTimeDisplay.textContent = `${formatTime(currentTime)} / ${formatTime(duration)}`;
+});
+
+// Allow user to seek through the song
+seekBar.addEventListener('input', function () {
+    const duration = audioPlayer.duration;
+    const newTime = (seekBar.value / 100) * duration;
+    audioPlayer.currentTime = newTime;
+});
+
+// Autoplay next song when current one ends
+audioPlayer.addEventListener('ended', function () {
+    loadRandomSong();
+});
+
+// Preload song data
 async function loadRandomSong() {
     try {
         // Cancel any previous fetch request
@@ -46,43 +75,21 @@ async function loadRandomSong() {
         document.getElementById('song-title').textContent = data.metadata.title;
         document.getElementById('song-artist').textContent = data.metadata.artist;
 
-        console.log("Loading background:", data.background);
-
         // Set the audio source
-        const audioPlayer = document.getElementById('audio-player');
         audioPlayer.src = data.audio;
         audioPlayer.play();
+        playPauseBtn.textContent = 'Pause'; // Show Pause since the song starts automatically
 
-        // Update the total duration and current time
-        const durationTimeElem = document.getElementById('current-time');
-        audioPlayer.onloadedmetadata = () => {
-            const totalDuration = formatTime(audioPlayer.duration);
-            durationTimeElem.textContent = `0:00 / ${totalDuration}`;
-        };
-
-        // Update current time and seekbar
-        audioPlayer.ontimeupdate = () => {
-            const currentTime = formatTime(audioPlayer.currentTime);
-            const totalDuration = formatTime(audioPlayer.duration);
-            document.getElementById('current-time').textContent = `${currentTime} / ${totalDuration}`;
-            document.getElementById('seek-bar').value = (audioPlayer.currentTime / audioPlayer.duration) * 100;
-        };
-
-        // Load and set the background only if the song ID is still the same
+        // Update the background image (if available)
         if (data.background) {
             preloadImage(data.background, function (url) {
-                if (currentSongId === data.audio) { // Ensure it's still the latest song
+                if (currentSongId === data.audio) {
                     document.body.style.backgroundImage = 'none'; // Clear previous background
                     document.body.style.transition = "background-image 300ms ease-in-out";
                     document.body.style.backgroundImage = `url(${url})`;
                 }
             });
         }
-
-        // Add an event listener to load the next song when the current one ends
-        audioPlayer.onended = function () {
-            loadRandomSong(); // Call the function again to load the next song
-        };
 
     } catch (error) {
         if (error.name !== 'AbortError') {
@@ -91,11 +98,23 @@ async function loadRandomSong() {
     }
 }
 
-// Function to format time in MM:SS
-function formatTime(seconds) {
-    const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+// Preload image helper function
+async function preloadImage(url, callback) {
+    if (currentImageRequest) {
+        currentImageRequest.abort(); // Cancel previous image loading
+    }
+
+    const controller = new AbortController();
+    currentImageRequest = controller;
+
+    const img = new Image();
+    img.src = url;
+
+    img.onload = function () {
+        if (!controller.signal.aborted) {
+            callback(url);
+        }
+    };
 }
 
 // Load a song when the page opens
