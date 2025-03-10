@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>osu!FM</title>
-    <link rel="stylesheet" href="/style.css?v=1.0.6">
+    <link rel="stylesheet" href="/style.css?v=1.0.7">
 </head>
 <body>
     <!-- Warning message -->
@@ -16,16 +16,19 @@
     <div class="container">
         <h1 id="song-title">Loading...</h1>
         <h2 id="song-artist"></h2>
-
+    
         <!-- Audio player removed controls -->
         <audio id="audio-player" src=""></audio>
-
+    
         <!-- Custom Seekbar placed above the Next Song button -->
         <input id="seek-bar" type="range" min="0" max="100" value="0" step="0.1">
-
+        
+        <!-- Current time display -->
+        <div id="current-time">0:00 / 0:00</div>
+    
         <!-- Play/Pause Button (if needed) -->
         <button id="playPauseBtn">Play</button>
-
+    
         <br>
         <!-- Next Song Button below the Seekbar -->
         <button onclick="loadRandomSong()">Next Song</button>

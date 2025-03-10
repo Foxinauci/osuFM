@@ -142,3 +142,10 @@ audio {
     font-size: 18px;
     cursor: pointer;
 }
+
+/* Time display next to the seek bar */
+#current-time {
+    font-size: 14px;
+    color: white;
+    margin-top: 10px;
+}
