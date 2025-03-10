@@ -142,8 +142,17 @@ volumeBar.addEventListener("input", function() {
     audioPlayer.volume = volumeBar.value; // Convert the volume back to 0-1 range
 });
 
-function openBeatmap() {
-    window.open(`https://osu.ppy.sh/beatmapsets/${beatmapID}`, "_blank");
+function togglePlaybackRate() {
+    let audio = document.getElementById("audio-player");
+    let button = document.getElementById("speed-toggle");
+
+    if (audio.playbackRate === 1) {
+        audio.playbackRate = 1.5;
+        button.textContent = "Nomod";
+    } else {
+        audio.playbackRate = 1;
+        button.textContent = "Double Time";
+    }
 }
 
 // Load a song when the page opens
