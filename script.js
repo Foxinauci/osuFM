@@ -1,18 +1,7 @@
-let currentSongId = null; // Track the latest song ID
-let currentRequest = null; // Store the current fetch request
-let currentImageRequest = null; // Store the current image loading request
+let currentSongId = null;
+let currentRequest = null;
+let currentImageRequest = null;
 
-let isSongLoaded = false; // Flag to track if the song has been properly loaded
-let isMetadataLoaded = false; // Flag to check if metadata is loaded
-
-// Format time as minutes:seconds (e.g., 2:30)
-function formatTime(seconds) {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = Math.floor(seconds % 60);
-    return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
-}
-
-// Preload the background image
 async function preloadImage(url, callback) {
     if (currentImageRequest) {
         currentImageRequest.abort(); // Cancel previous image loading
@@ -31,7 +20,6 @@ async function preloadImage(url, callback) {
     };
 }
 
-// Load a random song from the server
 async function loadRandomSong() {
     try {
         // Cancel any previous fetch request
@@ -42,7 +30,7 @@ async function loadRandomSong() {
         const controller = new AbortController();
         currentRequest = controller;
 
-        // Fetch the song from the server
+        // Fetch the song
         const response = await fetch('https://osufmapi.mathicloud.com/random-song', { signal: controller.signal });
         const data = await response.json();
 
@@ -51,40 +39,36 @@ async function loadRandomSong() {
             return;
         }
 
-        // Set the current song ID (audio URL)
+        // Set the current song ID
         currentSongId = data.audio; // Use the unique audio URL as an ID
 
-        // Update the song title and artist in the UI
+        // Update the song title and artist
         document.getElementById('song-title').textContent = data.metadata.title;
         document.getElementById('song-artist').textContent = data.metadata.artist;
 
         console.log("Loading background:", data.background);
 
-        // Set the audio source for the player
+        // Set the audio source
         const audioPlayer = document.getElementById('audio-player');
         audioPlayer.src = data.audio;
+        audioPlayer.play();
 
-        // Ensure the total duration is displayed after metadata is loaded
-        audioPlayer.onloadedmetadata = function () {
-            isMetadataLoaded = true; // Song metadata is loaded
-
-            // Set duration after metadata is loaded
-            const duration = formatTime(audioPlayer.duration);
-            document.getElementById('duration-time').textContent = duration;
-
-            // Set initial time as 0:00
-            document.getElementById('current-time').textContent = "0:00 / " + duration;
-
-            // Play the song automatically when the song is loaded
-            audioPlayer.play().then(() => {
-                document.getElementById('playPauseBtn').disabled = false; // Enable play button
-                document.getElementById('playPauseBtn').textContent = 'Pause'; // Change play button to "Pause"
-            }).catch(error => {
-                console.error('Autoplay error:', error);
-            });
+        // Update the total duration and current time
+        const durationTimeElem = document.getElementById('current-time');
+        audioPlayer.onloadedmetadata = () => {
+            const totalDuration = formatTime(audioPlayer.duration);
+            durationTimeElem.textContent = `0:00 / ${totalDuration}`;
         };
 
-        // Load and set the background image only if the song ID is still the same
+        // Update current time and seekbar
+        audioPlayer.ontimeupdate = () => {
+            const currentTime = formatTime(audioPlayer.currentTime);
+            const totalDuration = formatTime(audioPlayer.duration);
+            document.getElementById('current-time').textContent = `${currentTime} / ${totalDuration}`;
+            document.getElementById('seek-bar').value = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+        };
+
+        // Load and set the background only if the song ID is still the same
         if (data.background) {
             preloadImage(data.background, function (url) {
                 if (currentSongId === data.audio) { // Ensure it's still the latest song
@@ -107,47 +91,12 @@ async function loadRandomSong() {
     }
 }
 
-// Play/Pause Button Functionality
-document.getElementById('playPauseBtn').addEventListener('click', function () {
-    const audioPlayer = document.getElementById('audio-player');
+// Function to format time in MM:SS
+function formatTime(seconds) {
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+}
 
-    if (!isMetadataLoaded) {
-        console.log("Song metadata is not ready yet");
-        return; // Don't attempt to play if the song metadata is not loaded
-    }
-
-    if (audioPlayer.paused) {
-        audioPlayer.play();
-        this.textContent = 'Pause';
-    } else {
-        audioPlayer.pause();
-        this.textContent = 'Play';
-    }
-});
-
-// Handle the time updates and seekbar
-document.getElementById('audio-player').addEventListener('timeupdate', function () {
-    const audioPlayer = document.getElementById('audio-player');
-    const seekBar = document.getElementById('seek-bar');
-
-    // Update the seekbar position based on current time
-    const progress = (audioPlayer.currentTime / audioPlayer.duration) * 100;
-    seekBar.value = progress;
-
-    // Update the current time display
-    const currentTime = formatTime(audioPlayer.currentTime);
-    const duration = formatTime(audioPlayer.duration);
-    document.getElementById('current-time').textContent = `${currentTime} / ${duration}`;
-});
-
-// Seek functionality (dragging the seekbar)
-document.getElementById('seek-bar').addEventListener('input', function () {
-    const audioPlayer = document.getElementById('audio-player');
-    const seekBar = document.getElementById('seek-bar');
-
-    // Set the current time of the audio player based on the seekbar
-    audioPlayer.currentTime = (seekBar.value / 100) * audioPlayer.duration;
-});
-
-// Load the first random song when the page opens
+// Load a song when the page opens
 loadRandomSong();
