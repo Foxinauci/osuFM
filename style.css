@@ -85,16 +85,10 @@ h2 {
     border-radius: 5px;
     margin-top: 5px;
     width: 200px;
-    max-height: 0; /* Start with zero height */
-    overflow: hidden; /* Hide content when the height is 0 */
-    opacity: 0; /* Initially hidden */
-    transition: max-height 0.3s ease-out, opacity 0.3s ease-out; /* Add smooth transitions */
 }
 
 .warning input[type="checkbox"]:checked + label + .popup-menu {
     display: block; /* Show the popup menu when checkbox is checked */
-    max-height: 300px; /* Set a max height when the popup is open */
-    opacity: 1; /* Make the popup fully visible */
 }
 
 .popup-menu ul {
@@ -106,7 +100,6 @@ h2 {
 .popup-menu li {
     padding: 5px 0;
 }
-
 
 
 
