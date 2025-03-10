@@ -4,21 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>osu!FM</title>
-    <!-- Link to the external CSS file -->
     <link rel="stylesheet" href="/style.css">
     <style>
         .warning {
-            background-color: #ffcc00;
-            color: black;
+            background-color: transparent; /* Make background transparent */
+            color: white;  /* Change text color to white */
             text-align: center;
-            padding: 10px;
+            padding: 5px;  /* Reduced padding for smaller box */
             font-weight: bold;
+            font-size: 14px;  /* Optional: smaller text size */
             position: fixed;
             top: 10px;
             left: 50%;
             transform: translateX(-50%);
             z-index: 1000;
-            width: 90%;
+            width: auto;
         }
     </style>
 </head>
@@ -37,7 +37,6 @@
         <button onclick="loadRandomSong()">Next Song</button>
     </div>
 
-    <!-- Link to the external JavaScript file -->
     <script src="script.js"></script>
 </body>
 </html>
