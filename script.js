@@ -13,22 +13,19 @@ async function loadRandomSong() {
             return;
         }
 
-        // Update the song title and artist
-        document.getElementById('song-title').textContent = data.title;
-        document.getElementById('song-artist').textContent = data.artist;
+        // Update the song title and artist from metadata
+        document.getElementById('song-title').textContent = data.metadata.title;
+        document.getElementById('song-artist').textContent = data.metadata.artist;
 
         // Update the audio source and play the song
         const audioPlayer = document.getElementById('audio-player');
         audioPlayer.src = data.audio;
         audioPlayer.play();  // Play the song automatically
 
-        // Set the background image and preload it
+        // Set the background image and preload it if it exists
         if (data.background) {
             document.body.style.backgroundImage = `url(${data.background})`;
-            preloadImage(data.background, function(url) {
-                document.body.style.transition = "background-image 1s ease-in-out";
-                document.body.style.backgroundImage = `url(${url})`;
-            });
+            preloadImage(data.background);
         }
 
         // Add an event listener to load the next song when the current one ends
