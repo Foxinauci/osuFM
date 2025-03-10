@@ -28,7 +28,7 @@ async function loadRandomSong() {
         // Set the background image and preload it
         if (data.background) {
             preloadImage(data.background, function(url) {
-                document.body.style.transition = "background-image 5s ease-in-out";
+                document.body.style.transition = "background-image 0.3s ease-in-out";
                 document.body.style.backgroundImage = `url(${url})`;
             });
         }
