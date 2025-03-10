@@ -5,6 +5,7 @@ let audioPlayer = document.getElementById('audio-player');
 let seekBar = document.getElementById('seek-bar');
 let currentTimeDisplay = document.getElementById('current-time');
 let playPauseBtn = document.getElementById('playPauseBtn');
+let volumeBar = document.getElementById('volume-bar');  // Volume bar element
 
 // Function to format time (mm:ss)
 function formatTime(seconds) {
@@ -127,6 +128,11 @@ async function preloadImage(url, callback) {
         }
     };
 }
+
+// Volume Control: Adjust audio volume based on volume bar
+volumeBar.addEventListener("input", function() {
+    audioPlayer.volume = volumeBar.value; // Set the audio volume (range 0-1)
+});
 
 // Load a song when the page opens
 loadRandomSong();
