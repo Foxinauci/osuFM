@@ -55,9 +55,17 @@ async function loadRandomSong() {
         audioPlayer.src = data.audio;
 
         // Once the audio metadata is loaded, allow the play button to work
-        audioPlayer.onloadedmetadata = function() {
+        audioPlayer.onloadedmetadata = function () {
             isSongLoaded = true; // Song is loaded and ready to play
             document.getElementById('playPauseBtn').disabled = false; // Enable the play button
+            document.getElementById('playPauseBtn').textContent = 'Play'; // Set play button to "Play"
+
+            // Display the total duration of the song
+            const duration = formatTime(audioPlayer.duration);
+            document.getElementById('duration-time').textContent = duration;
+            
+            // Set initial time as 0:00
+            document.getElementById('current-time').textContent = "0:00 / " + duration;
         };
 
         // Load and set the background only if the song ID is still the same
@@ -84,7 +92,7 @@ async function loadRandomSong() {
 }
 
 // Play/Pause Button Functionality
-document.getElementById('playPauseBtn').addEventListener('click', function() {
+document.getElementById('playPauseBtn').addEventListener('click', function () {
     const audioPlayer = document.getElementById('audio-player');
 
     if (!isSongLoaded) {
