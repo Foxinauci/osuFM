@@ -62,9 +62,39 @@ h2 {
     transform: translateX(-50%);
     color: white;
     padding: 5px 15px;
-    font-size: 16px; /* Adjust the size to be smaller */
+    font-size: 16px;
     border-radius: 5px;
     z-index: 9999;
+    cursor: pointer;
+    position: relative; /* Needed for positioning the popup */
+}
+
+.popup-menu {
+    display: none; /* Hide by default */
+    position: absolute;
+    top: 100%; /* Position below the warning message */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 5px;
+    width: 200px; /* Set a width for the popup */
+}
+
+.warning:hover .popup-menu {
+    display: block; /* Show when hovering over the warning */
+}
+
+.popup-menu ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.popup-menu li {
+    padding: 5px 0;
 }
 
 /* Custom button design */
