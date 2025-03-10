@@ -136,11 +136,26 @@ audio {
 
 /* Style the play/pause button */
 #playPauseBtn {
-    background: none;
-    border: none;
-    color: white;
+    padding: 12px 24px;
+    margin-top: 30px;
     font-size: 18px;
     cursor: pointer;
+    background: linear-gradient(145deg, #6e7bff, #5560ea);
+    border: none;
+    border-radius: 10px;
+    color: white;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+}
+
+#playPauseBtn:hover {
+    background: linear-gradient(145deg, #8e97ff, #7284f4);
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.5);
+}
+
+#playPauseBtn:active {
+    background: linear-gradient(145deg, #4e59d4, #3b45a0);
+    transform: translateY(2px);
 }
 
 /* Time display next to the seek bar */
