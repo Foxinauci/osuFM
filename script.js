@@ -16,9 +16,9 @@ async function loadRandomSong() {
             return;
         }
 
-        // Update the song title and artist
-        document.getElementById('song-title').textContent = data.title;
-        document.getElementById('song-artist').textContent = data.artist;
+        // Update the song title and artist from metadata
+        document.getElementById('song-title').textContent = data.metadata.title;
+        document.getElementById('song-artist').textContent = data.metadata.artist;
 
         // Update the audio source and play the song
         const audioPlayer = document.getElementById('audio-player');
