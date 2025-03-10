@@ -29,11 +29,11 @@ audioPlayer.addEventListener('timeupdate', function () {
     const currentTime = audioPlayer.currentTime;
     const duration = audioPlayer.duration;
 
-    // Update seekbar
-    seekBar.value = (currentTime / duration) * 100;
-
-    // Update current time and duration time
-    currentTimeDisplay.textContent = `${formatTime(currentTime)} / ${formatTime(duration)}`;
+    // Update the seekbar and current time display
+    if (!isNaN(duration)) { // Prevent NaN errors if the duration isn't loaded yet
+        seekBar.value = (currentTime / duration) * 100;
+        currentTimeDisplay.textContent = `${formatTime(currentTime)} / ${formatTime(duration)}`;
+    }
 });
 
 // Allow user to seek through the song
